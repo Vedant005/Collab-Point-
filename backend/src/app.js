@@ -1,8 +1,10 @@
 import express from "express";
 import cors from "cors";
-
+import { Server } from "socket.io";
+import { createServer } from "http";
 const app = express();
 
+const httpServer = createServer(app);
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
@@ -34,20 +36,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-// cron.schedule("*/14 * * * *", async () => {
-//   try {
-//     const response = await axios.get(`${process.env.BACKEND_URL}/health`);
-//     console.log(`Health check response: ${response.status}`);
-//   } catch (error) {
-//     console.error(`Health check error: ${error.message}`);
-//   }
-// });
-
 //routes import
 
 import userRouter from "./routes/user.routes.js";
+import taskRoutes from "./routes/task.routes.js";
+import actionLogRoutes from "./routes/actionLog.routes.js";
 
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/tasks", taskRoutes);
+app.use("/api/v1/action", actionLogRoutes);
 
 app.get("/health", (req, res) => {
   res.send("OK");
